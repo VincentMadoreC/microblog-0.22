@@ -243,7 +243,7 @@ def load_user(id):
     return User.query.get(int(id))
 
 
-class Post(SearchableMixin, db.Model):
+class Post(PaginatedAPIMixin, SearchableMixin, db.Model):
     __searchable__ = ['body']
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String(140))
@@ -253,6 +253,23 @@ class Post(SearchableMixin, db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
+
+    def to_dict(self):
+        data = {
+            "id": self.id,
+            "body": self.body,
+            "timestamp": self.timestamp,
+            "user_id": self.user_id,
+            "language": self.language
+        }
+        return data
+
+    def from_dict(self, data):
+        for field in ['body', 'user_id']:
+            if field in data:
+                setattr(self, field, data[field])
+
+        
 
 
 class Message(db.Model):

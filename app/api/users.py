@@ -3,10 +3,7 @@ from app.api import bp
 from app.models import User
 from app.api.errors import bad_request
 from app.api.auth import token_auth
-from flask import jsonify
-from flask import request
-from flask import url_for
-from flask import g, abort
+from flask import jsonify, request, url_for, g, abort
 
 @bp.route('/users/<int:id>', methods=['GET'])
 # @token_auth.login_required
@@ -53,7 +50,7 @@ def create_user():
     db.session.add(user)
     db.session.commit()
     response = jsonify(user.to_dict())
-    response.status_code = 201
+
     response.headers['Location'] = url_for('api.get_user', id=user.id)
     return response
 
