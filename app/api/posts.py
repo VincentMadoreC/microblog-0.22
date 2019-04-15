@@ -7,8 +7,8 @@ from datetime import datetime
 
 @bp.route('/posts/<int:id>', methods=['GET'])
 def get_post(id):
-    return jsonify(Post.query.get_or_404(id).to_dict())
     # get the post specified by the id
+    return jsonify(Post.query.get_or_404(id).to_dict())
 
 @bp.route('/posts/by_user/<int:user_id>', methods=['GET'])
 def get_posts(user_id):
