@@ -61,8 +61,8 @@ db.event.listen(db.session, 'after_commit', SearchableMixin.after_commit)
 
 followers = db.Table(
     'followers',
-    db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
+    db.Column('follower_id', db.Integer, db.ForeignKey('user.id', ondelete='CASCADE')),
+    db.Column('followed_id', db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
 )
 
 
@@ -95,7 +95,7 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
-    posts = db.relationship('Post', backref='author', lazy='dynamic')
+    posts = db.relationship('Post', backref='author', lazy='dynamic', cascade="all, delete, delete-orphan")
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     followed = db.relationship(
@@ -274,8 +274,8 @@ class Post(PaginatedAPIMixin, SearchableMixin, db.Model):
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
+    recipient_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
     body = db.Column(db.String(140))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
@@ -286,7 +286,7 @@ class Message(db.Model):
 class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), index=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
     timestamp = db.Column(db.Float, index=True, default=time)
     payload_json = db.Column(db.Text)
 
@@ -298,7 +298,7 @@ class Task(db.Model):
     id = db.Column(db.String(36), primary_key=True)
     name = db.Column(db.String(128), index=True)
     description = db.Column(db.String(128))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
     complete = db.Column(db.Boolean, default=False)
 
     def get_rq_job(self):
