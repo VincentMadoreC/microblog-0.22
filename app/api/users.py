@@ -71,4 +71,10 @@ def update_user(id):
     db.session.commit()
     return jsonify(user.to_dict())
 
-
+@bp.route('/users/<int:id>', methods=['DELETE'])
+def delete_user(id):
+    user = User.query.get_or_404(id)
+    db.session.delete(user)
+    db.session.commit()
+    response = jsonify(user.to_dict())
+    return response

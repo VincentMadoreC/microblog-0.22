@@ -49,3 +49,11 @@ def update_post(id):
     post.from_dict(data)
     db.session.commit()
     return jsonify(post.to_dict())
+
+@bp.route('/posts/<int:id>', methods=['DELETE'])
+def delete_post(id):
+    post = Post.query.get_or_404(id)
+    db.session.delete(post)
+    db.session.commit()
+    response = jsonify(post.to_dict())
+    return response
